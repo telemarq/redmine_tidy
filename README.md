@@ -8,7 +8,7 @@ USE AT YOUR OWN RISK!  Make sure you understand what is going on and the fact th
 
 ## Example use
 
-    ./redmine_tidy.py --url http://issues.mycompany.com --key MY_REDMINE_API_KEY --weeks 52
+    redmine-tidy.py --url http://issues.mycompany.com --key MY_REDMINE_API_KEY --weeks 52
 
 Run the script with --help to see the full syntax.
 
@@ -16,7 +16,7 @@ You can find your API access key by logging into Redmine and looking at your acc
 
 ## Installation & Configuration
 
-Redmine Tidy is a single script (redmine_tidy.py) but makes use of a couple of other python packages.
+Redmine Tidy is a single script (redmine-tidy.py) but makes use of a couple of other python packages.
 You can get them with:
 
     pip install -r requirements.txt
@@ -25,7 +25,7 @@ It should work under Python 2.7 or later.
 
 Instead of putting arguments on the command line, you can put them in a JSON config file, or you can do a combination of both.  Putting your API key in the config file and making the file not-publicly-readable is a better idea than putting it on the command line.
 
-See the output of './redmine_tidy.py --help' for more information.
+See the output of 'redmine-tidy.py --help' for more information.
 
 ## Usage notes
 

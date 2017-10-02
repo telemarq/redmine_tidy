@@ -22,7 +22,7 @@
 Abandon Redmine tickets which have not been updated for some time.
 
 Usage:
-  redmine_tidy.py [options] [PROJECT]
+  redmine-tidy.py [options] [PROJECT]
 
 Options:
   -h --help           Show this help message and exit
@@ -32,7 +32,7 @@ Options:
   -w --weeks N        Issues older than this will be abandoned [default: 108]
   -s --status STATUS  Status to use for abandoned issues [default: Closed]
   -n --dry-run        Don't actually do it, just report
-  -c --config CONFIG_FILE  JSON file containing arguments [default: /etc/redmine_tidy.json]
+  -c --config CONFIG_FILE  JSON file containing arguments [default: /etc/redmine-tidy.json]
 
 If you specify a PROJECT, then only it will be checked (non-recursively).
 Otherwise all projects will be examined.

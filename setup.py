@@ -14,6 +14,6 @@ setup(
     url='https://github.com/telemarq/redmine_tidy',
     license='GNU GPL 2',
     packages=(),
-    scripts = ['redmine_tidy.py'],
+    scripts = ['redmine-tidy.py'],
     install_requires=('python-redmine','docopt'),
 )
