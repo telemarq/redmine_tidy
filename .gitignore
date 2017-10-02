@@ -1,3 +1,4 @@
 env
 *.pyc
 redmine_tidy.json
+.vscode
