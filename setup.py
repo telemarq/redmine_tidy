@@ -1,7 +1,7 @@
 from setuptools import setup
 
 major_version = 1
-minor_version = 0
+minor_version = 1
 build_version = 0
 
 version = str(major_version) + '.' + str(minor_version) + '.' + str(build_version)

@@ -92,6 +92,14 @@ def main():
             print("Reading {}".format(config_file_name))
             args.update(json.load(fp))
 
+    if args.get('--url') is None:
+        print("You need to specify a URL on the command line or in a config file.")
+        sys.exit(1)
+
+    if args.get('--key') is None:
+        print("You need to specify an API key on the command line or in a config file.")
+        sys.exit(1)
+
     redmine = Redmine(args['--url'], key=args['--key'])
     threshold_date = datetime.now() - timedelta(weeks=int(args['--weeks']))
     dry_run = args.get('--dry-run', False)
