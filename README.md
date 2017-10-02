@@ -17,9 +17,9 @@ You can find your API access key by logging into Redmine and looking at your acc
 ## Installation & Configuration
 
 Redmine Tidy is a single script (redmine-tidy.py) but makes use of a couple of other python packages.
-You can get them with:
+It's easiest to install it with pip:
 
-    pip install -r requirements.txt
+    pip install redmine-tidy
 
 It should work under Python 2.7 or later.
 
