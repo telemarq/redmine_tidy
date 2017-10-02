@@ -12,6 +12,8 @@ USE AT YOUR OWN RISK!  Make sure you understand what is going on and the fact th
 
 Run the script with --help to see the full syntax.
 
+You can find your API access key by logging into Redmine and looking at your account details.
+
 ## Installation & Configuration
 
 Redmine Tidy is a single script (redmine_tidy.py) but makes use of a couple of other python packages.
@@ -21,7 +23,15 @@ You can get them with:
 
 It should work under Python 2.7 or later.
 
-Instead of putting arguments on the command line, you can put them in a JSON config file, or you can do a combination of both.
+Instead of putting arguments on the command line, you can put them in a JSON config file, or you can do a combination of both.  Putting your API key in the config file and making the file not-publicly-readable is a better idea than putting it on the command line.
 
 See the output of './redmine_tidy.py --help' for more information.
+
+## Disclaimer
+
+You use this at your own risk.  The author will not be liable for any unintended consequences of its use!
+
+## Licence
+
+This software is distributed under the terms of the GNU General Public License v2.
 
