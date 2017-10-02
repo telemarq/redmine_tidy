@@ -27,6 +27,12 @@ Instead of putting arguments on the command line, you can put them in a JSON con
 
 See the output of './redmine_tidy.py --help' for more information.
 
+## Usage notes
+
+We find it useful to have a new issue status called 'Abandoned' which is essentially the same as 'Closed' but which can be used to identify tickets tidied up by this system.  Note that if you create this in Redmine, you also need to edit the Workflow to allow valid transitions to and from the other states.
+
+Then you can add '--status Abandoned' to your command line.
+
 ## Disclaimer
 
 You use this at your own risk.  The author will not be liable for any unintended consequences of its use!
