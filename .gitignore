@@ -3,3 +3,4 @@ env
 redmine_tidy.json
 redmine-tidy.json
 .vscode
+*.egg-info
