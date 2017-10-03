@@ -29,7 +29,9 @@ See the output of 'redmine-tidy.py --help' for more information.
 
 ## Usage notes
 
-We find it useful to have a new issue status called 'Abandoned' which is essentially the same as 'Closed' but which can be used to identify tickets tidied up by this system.  Note that if you create this in Redmine, you also need to edit the Workflow to allow valid transitions to and from the other states.
+We find it useful to have a new issue status called 'Abandoned' which is essentially the same as 'Closed' but which can be used to identify tickets tidied up by this system.  
+
+Note that if you create this in Redmine, you also need to edit the Workflows to allow valid transitions to and from the other states.  If you have more than one tracker type (category of issue), you'll need to check the workflow for each one.
 
 Then you can add '--status Abandoned' to your command line.
 
