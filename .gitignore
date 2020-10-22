@@ -1,6 +1,7 @@
 env
 *.pyc
-redmine_tidy.json
 redmine-tidy.json
+redmine_tidy.json
 .vscode
 *.egg-info
+docker-compose-production.yml

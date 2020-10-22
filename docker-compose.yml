@@ -22,5 +22,5 @@ services:
       - source: crontab_config
         target: /etc/crontabs/root   
         mode: 0600
-    command: crond -l 4 -L /dev/stdout -f
+    command: crond -l 6 -L /dev/stdout -f
 
