@@ -35,6 +35,16 @@ Note that if you create this in Redmine, you also need to edit the Workflows to 
 
 Then you can add '--status Abandoned' to your command line.
 
+## Running under Docker
+
+A quick demo. Create your own redmine-tidy.json config file, mount it in the container at /etc/redmine-tidy.json, and run the container.
+
+    docker build -t redmine_tidy .
+    docker run --rm -v `pwd`/redmine-tidy.json:/etc/redmine-tidy.json redmine_tidy
+
+If you'd like something that runs redmine-tidy on a regular basis -- perhaps once a day -- then you could use the crond built into the Alpine OS on which the container is based.
+The docker-compose.yml gives an example of how you might set this up under docker swarm.
+
 ## Disclaimer
 
 You use this at your own risk.  The author will not be liable for any unintended consequences of its use!
@@ -43,3 +53,5 @@ You use this at your own risk.  The author will not be liable for any unintended
 
 This software is distributed under the terms of the GNU General Public License v2.
 
+Quentin Stafford-Fraser
+quentinsf.com

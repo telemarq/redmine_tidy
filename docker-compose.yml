@@ -1,0 +1,25 @@
+# A compose file that sets up a container to run redmine-tidy
+# as a cron job once per day.
+
+version: "3.8"
+
+secrets:
+  redmine_tidy_config:
+    file: redmine-tidy.json
+
+configs:
+  crontab_config:
+    file: redmine-tidy.sh
+
+services:
+  redmine_tidy:
+    image: redmine_tidy
+    secrets:
+      - source: redmine_tidy_config
+        target: /etc/redmine-tidy.json
+    configs:
+      - source: crontab_config
+        target: /etc/periodic/15min/redmine-tidy.sh
+        mode: 0755
+    command: crond -l 1 -L /var/log/cron -f
+

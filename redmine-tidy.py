@@ -65,6 +65,7 @@ This ticket is being closed automatically since there have been no updates for a
 Please re-open it if you feel it still to be important.
 """
 
+
 def tidy_project(redmine, project, threshold_date, new_status, dry_run=True):
     print("Tidying project '{}' ({})".format(project.name, project.identifier))
 
