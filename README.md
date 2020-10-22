@@ -43,7 +43,7 @@ A quick demo. Create your own redmine-tidy.json config file, mount it in the con
     docker run --rm -v `pwd`/redmine-tidy.json:/etc/redmine-tidy.json redmine_tidy
 
 If you'd like something that runs redmine-tidy on a regular basis -- perhaps once a day -- then you could use the crond built into the Alpine OS on which the container is based.
-The docker-compose.yml gives an example of how you might set this up under docker swarm.
+The docker-compose.yml gives an example of how you might set this up under Docker Swarm.
 
 ## Disclaimer
 

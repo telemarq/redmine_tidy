@@ -53,11 +53,15 @@ command line if both are specified: not really ideal.
 
 from datetime import datetime, timedelta
 import json
+import logging
 import os
 import sys
 
 from docopt import docopt
 from redminelib import Redmine
+
+log = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
 
 JOURNAL_NOTE = """
 This ticket is being closed automatically since there have been no updates for a long time.
@@ -67,7 +71,7 @@ Please re-open it if you feel it still to be important.
 
 
 def tidy_project(redmine, project, threshold_date, new_status, dry_run=True):
-    print("Tidying project '{}' ({})".format(project.name, project.identifier))
+    log.info("Tidying project '{}' ({})".format(project.name, project.identifier))
 
     # After doing the following, I discovered an alternative:
     # using filters.  Not needed except if performance becomes an issue.
@@ -76,12 +80,12 @@ def tidy_project(redmine, project, threshold_date, new_status, dry_run=True):
         # Only deal with top-level issues: don't recurse at this point
         if issue.project.id == project.id:
             if issue.updated_on < threshold_date:
-                print("  {:4d}: {} {}".format(issue.id, issue.updated_on, issue.subject))
+                log.info("  {:4d}: {} {}".format(issue.id, issue.updated_on, issue.subject))
                 if not dry_run:
-                    print("        Changing to '{}'.".format(new_status.name))
+                    log.info("        Changing to '{}'.".format(new_status.name))
                     redmine.issue.update(issue.id, status_id=new_status.id, notes=JOURNAL_NOTE)
                 else:
-                    print("        Would change to '{}', if dry run not requested.".format(new_status.name))
+                    log.info("        Would change to '{}', if dry run not requested.".format(new_status.name))
 
 
 def main():
@@ -90,15 +94,15 @@ def main():
     config_file_name = args['--config']
     if os.path.exists(config_file_name):
         with open(config_file_name, 'r') as fp:
-            print("Reading {}".format(config_file_name))
+            log.info("Reading {}".format(config_file_name))
             args.update(json.load(fp))
 
     if args.get('--url') is None:
-        print("You need to specify a URL on the command line or in a config file.")
+        log.error("You need to specify a URL on the command line or in a config file.")
         sys.exit(1)
 
     if args.get('--key') is None:
-        print("You need to specify an API key on the command line or in a config file.")
+        log.error("You need to specify an API key on the command line or in a config file.")
         sys.exit(1)
 
     redmine = Redmine(args['--url'], key=args['--key'])
@@ -109,7 +113,7 @@ def main():
     if args.get('--list'):
         projects = redmine.project.all()
         for project in projects:
-            print("{} ({})".format(project.identifier, project.name))
+            log.info("{} ({})".format(project.identifier, project.name))
         return
 
     # What status shall we use for old issues?
@@ -121,7 +125,7 @@ def main():
             new_status = status
             break
     if new_status is None:
-        print("Status '{}' not found".format(new_status_name))
+        log.error("Status '{}' not found".format(new_status_name))
         sys.exit(1)
 
     # OK - let's get tidying

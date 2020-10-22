@@ -9,17 +9,18 @@ secrets:
 
 configs:
   crontab_config:
-    file: redmine-tidy.sh
+    file: crontab
 
 services:
   redmine_tidy:
+    build: .
     image: redmine_tidy
     secrets:
       - source: redmine_tidy_config
         target: /etc/redmine-tidy.json
     configs:
       - source: crontab_config
-        target: /etc/periodic/15min/redmine-tidy.sh
-        mode: 0755
-    command: crond -l 1 -L /var/log/cron -f
+        target: /etc/crontabs/root   
+        mode: 0600
+    command: crond -l 4 -L /dev/stdout -f
 
