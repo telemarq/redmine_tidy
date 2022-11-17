@@ -8,3 +8,4 @@ docker-compose-production.yml
 /.blackbox/pubring.gpg~
 /.blackbox/pubring.kbx~
 /.blackbox/secring.gpg
+/crontab-tickbeat
