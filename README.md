@@ -27,6 +27,12 @@ Instead of putting arguments on the command line, you can put them in a JSON con
 
 See the output of 'redmine-tidy.py --help' for more information.
 
+## Running/installing in the Telemarq Docker world
+
+```
+AWS_PROFILE=telemarq make build push deploy
+```
+
 ## Usage notes
 
 We find it useful to have a new issue status called 'Abandoned' which is essentially the same as 'Closed' but which can be used to identify tickets tidied up by this system.  
