@@ -5,3 +5,6 @@ redmine_tidy.json
 .vscode
 *.egg-info
 docker-compose-production.yml
+/.blackbox/pubring.gpg~
+/.blackbox/pubring.kbx~
+/.blackbox/secring.gpg
