@@ -1,0 +1,33 @@
+# A compose file that sets up a container to run redmine-tidy
+# as a cron job once per day.
+
+version: "3.8"
+
+secrets:
+  redmine_tidy_config:
+    file: redmine-tidy.json
+
+configs:
+  # Note - in production, we want to tick the beat after success
+  crontab_config:
+    file: crontab-tickbeat
+    name: crontab-tickbeat_2022-11-17
+
+services:
+  app:
+    image: 825315037832.dkr.ecr.eu-west-1.amazonaws.com/redmine-tidy
+    build: .
+    secrets:
+      - source: redmine_tidy_config
+        target: /etc/redmine-tidy.json
+    configs:
+      - source: crontab_config
+        target: /etc/crontabs/root   
+        mode: 0600
+    command: crond -l 5 -L /dev/stdout -f
+
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+        delay: 25s
