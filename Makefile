@@ -8,6 +8,7 @@
 
 COMPOSE_FILE := docker-compose-production.yml
 STACK_NAME := redmine_tidy
+DOCKER_CONTEXT := telemarq3
 
 .PHONY: build push deploy
 
@@ -26,10 +27,10 @@ pull:
 	docker-compose -f ${COMPOSE_FILE} pull
 
 deploy:
-	docker -c telemarq stack deploy -c $(COMPOSE_FILE) ${STACK_NAME} --with-registry-auth
+	docker -c ${DOCKER_CONTEXT} stack deploy -c $(COMPOSE_FILE) ${STACK_NAME} --with-registry-auth
 
 # Shut down the stack
 remove:
-	docker -c telemarq stack rm  ${STACK_NAME}
+	docker -c ${DOCKER_CONTEXT} stack rm  ${STACK_NAME}
 
 

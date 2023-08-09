@@ -30,7 +30,7 @@ See the output of 'redmine-tidy.py --help' for more information.
 ## Running/installing in the Telemarq Docker world
 
 ```
-AWS_PROFILE=telemarq make build push deploy
+./deploy.sh
 ```
 
 ## Usage notes
