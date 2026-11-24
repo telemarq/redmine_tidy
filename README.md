@@ -29,9 +29,22 @@ See the output of 'redmine-tidy.py --help' for more information.
 
 ## Running/installing in the Telemarq Docker world
 
+Deployment uses [Task](https://taskfile.dev). Run `task` to list the
+available tasks. The usual one is:
+
 ```
-./deploy.sh
+task deploy-full     # clean build, push to ECR, deploy the stack
 ```
+
+The config (`redmine-tidy.json`) and production crontab (`crontab-tidy-check`)
+are plain files. The secret values - the Redmine API key and the healthchecks.io
+ping ID - are in `secrets.env`, encrypted with [sops](https://getsops.io) using
+PGP keys (see `.sops.yaml` for the recipients), and are passed to the container
+as the environment variables `REDMINE_TIDY_KEY` and `HC_PING_ID`.
+
+Edit the secrets with `task edit-secrets`, then commit and redeploy.
+To give someone else access, add their PGP fingerprint to `.sops.yaml` and
+run `sops updatekeys secrets.env`.
 
 ## Usage notes
 

@@ -1,2 +1,0 @@
-crontab-tickbeat
-redmine-tidy.json

@@ -1,28 +1,33 @@
 # A compose file that sets up a container to run redmine-tidy
 # as a cron job once per day.
+#
+# Deploy with 'task deploy', which supplies the secret environment variables
+# from the sops-encrypted secrets.env, and the version suffixes for the configs.
 
 version: "3.8"
 
-secrets:
+configs:
+  # Swarm configs are immutable, so their names include a hash of the contents.
   redmine_tidy_config:
     file: redmine-tidy.json
-
-configs:
-  # Note - in production, we want to tick the beat after success
+    name: redmine_tidy_config_${CONFIG_VERSION:?use 'task deploy'}
+  # Note - in production, the crontab also pings a healthcheck after success
   crontab_config:
-    file: crontab-tickbeat
-    name: crontab-tickbeat_2022-11-17
+    file: crontab-tidy-check
+    name: redmine_tidy_crontab_${CRONTAB_VERSION:?use 'task deploy'}
 
 services:
   app:
     image: 825315037832.dkr.ecr.eu-west-1.amazonaws.com/redmine-tidy
     build: .
-    secrets:
+    environment:
+      REDMINE_TIDY_KEY: ${REDMINE_TIDY_KEY:?use 'task deploy'}
+      HC_PING_ID: ${HC_PING_ID:?use 'task deploy'}
+    configs:
       - source: redmine_tidy_config
         target: /etc/redmine-tidy.json
-    configs:
       - source: crontab_config
-        target: /etc/crontabs/root   
+        target: /etc/crontabs/root
         mode: 0600
     command: crond -l 5 -L /dev/stdout -f
 

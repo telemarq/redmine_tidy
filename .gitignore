@@ -1,10 +1,5 @@
 env
 *.pyc
-redmine-tidy.json
 .vscode
 *.egg-info
-/.blackbox/pubring.gpg~
-/.blackbox/pubring.kbx~
-/.blackbox/secring.gpg
-/crontab-tickbeat
-/redmine-tidy.json
+.DS_Store

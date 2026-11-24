@@ -1,27 +1,27 @@
 # A compose file that sets up a container to run redmine-tidy
 # as a cron job once per day.
+#
+# 'task run' supplies REDMINE_TIDY_KEY from the sops-encrypted secrets.env.
 
 version: "3.8"
 
-secrets:
+configs:
   redmine_tidy_config:
     file: redmine-tidy.json
-
-configs:
   crontab_config:
     file: crontab
-    name: crontab-tickbeat_2022-11-17
+    name: crontab-tidy_2022-11-17
 
 services:
   redmine_tidy:
     build: .
     image: redmine_tidy
-    secrets:
+    environment:
+      REDMINE_TIDY_KEY: ${REDMINE_TIDY_KEY:?use 'task run'}
+    configs:
       - source: redmine_tidy_config
         target: /etc/redmine-tidy.json
-    configs:
       - source: crontab_config
-        target: /etc/crontabs/root   
+        target: /etc/crontabs/root
         mode: 0600
     command: crond -l 6 -L /dev/stdout -f
-

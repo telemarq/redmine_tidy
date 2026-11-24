@@ -27,7 +27,7 @@ Usage:
 Options:
   -h --help           Show this help message and exit
   -u --url URL        Base URL for Redmine instance 
-  -k --key KEY        API key for Redmine user
+  -k --key KEY        API key for Redmine user (or set REDMINE_TIDY_KEY)
   -l --list           List projects and exit
   -w --weeks N        Issues older than this will be abandoned [default: 108]
   -s --status STATUS  Status to use for abandoned issues [default: Closed]
@@ -49,6 +49,9 @@ mapping the long-form option names to values, e.g.
 
 NOTE that values in the config file will OVERRIDE values specified on the
 command line if both are specified: not really ideal.
+
+If no API key is given on the command line or in the config file, it will be
+taken from the REDMINE_TIDY_KEY environment variable, if set.
 """
 
 from datetime import datetime, timedelta
@@ -102,7 +105,11 @@ def main():
         sys.exit(1)
 
     if args.get('--key') is None:
-        log.error("You need to specify an API key on the command line or in a config file.")
+        args['--key'] = os.environ.get('REDMINE_TIDY_KEY')
+
+    if args.get('--key') is None:
+        log.error("You need to specify an API key on the command line, in a config file "
+                  "or in the REDMINE_TIDY_KEY environment variable.")
         sys.exit(1)
 
     redmine = Redmine(args['--url'], key=args['--key'])

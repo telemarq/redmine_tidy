@@ -1,0 +1,13 @@
+# sops configuration: which keys encrypt which files.
+#
+# Recipients are PGP keys (same people who had access under Blackbox, minus
+# expired keys). After changing this list, re-encrypt existing files with:
+#   sops updatekeys <file>
+#
+#   36F2083F... Quentin Stafford-Fraser
+#   E613018F... Christos Nikolaou
+creation_rules:
+  - path_regex: (^|/)secrets\.env$
+    pgp: >-
+      36F2083F293ED4FD83847B8309328E8BF9464B5F,
+      E613018FF214B1F4A94528F7FE44EA21F3D4E471

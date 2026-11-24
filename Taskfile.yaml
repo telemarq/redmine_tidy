@@ -1,0 +1,125 @@
+# Redmine Tidy - Docker Swarm deployment tasks
+#
+# Run 'task' with no arguments to list the available tasks.
+#
+# Secrets are kept in secrets.env, encrypted with sops (see .sops.yaml for the
+# recipients), and passed to the container as environment variables:
+#   REDMINE_TIDY_KEY - the Redmine API key
+#   HC_PING_ID       - the healthchecks.io ping ID used in crontab-tidy-check
+#
+# In order to push images and deploy the stack, your local docker engine will
+# need to be logged in to the ECR repository, using the AWS_PROFILE below.
+
+version: "3"
+
+env:
+  AWS_PROFILE: telemarq
+
+vars:
+  IMAGE_REPO: 825315037832.dkr.ecr.eu-west-1.amazonaws.com
+  IMAGE_NAME: redmine-tidy
+  IMAGE: "{{.IMAGE_REPO}}/{{.IMAGE_NAME}}"
+  STACK_NAME: redmine_tidy
+  DOCKER_CONTEXT: telemarq3
+  APP_SERVICE: "{{.STACK_NAME}}_app"
+  SWARM_COMPOSE_FILE: docker-compose-production.yml
+  CONFIG_FILE: redmine-tidy.json
+  CRONTAB_FILE: crontab-tidy-check
+  GIT_SHA:
+    sh: git rev-parse HEAD
+
+tasks:
+  default:
+    silent: true
+    cmds:
+      - task -l
+
+  git_clean_check:
+    internal: true
+    desc: Ensure the working tree is committed and in sync with the git remote
+    preconditions:
+      - msg: "There are uncommitted git changes. Commit or stash them first."
+        sh: test -z "$(git status --porcelain --untracked-files=no)"
+      - msg: "Could not fetch from the git remote."
+        sh: git fetch
+      - msg: "There are unpushed git commits. Push them first."
+        sh: test -z "$(git log @{u}..HEAD 2>/dev/null)"
+
+  build:
+    desc: Build the Docker image
+    env:
+      DOCKER_DEFAULT_PLATFORM: linux/amd64
+    cmds:
+      - docker build -t {{.IMAGE}} -t {{.IMAGE}}:{{.GIT_SHA}} -t redmine_tidy .
+
+  build-production:
+    desc: Build the Docker image for production (clean, amd64)
+    deps: [git_clean_check]
+    env:
+      DOCKER_DEFAULT_PLATFORM: linux/amd64
+    cmds:
+      - docker build --no-cache -t {{.IMAGE}} -t {{.IMAGE}}:{{.GIT_SHA}} .
+
+  push:
+    desc: Push the Docker image to the repository
+    deps: [git_clean_check]
+    cmds:
+      - docker push {{.IMAGE}}
+      - docker push {{.IMAGE}}:{{.GIT_SHA}}
+
+  pull-production:
+    desc: Pull the image to {{.DOCKER_CONTEXT}}
+    env:
+      DOCKER_DEFAULT_PLATFORM: linux/amd64
+    cmds:
+      - docker -c {{.DOCKER_CONTEXT}} pull {{.IMAGE}}:{{.GIT_SHA}}
+      - docker -c {{.DOCKER_CONTEXT}} pull {{.IMAGE}}
+
+  deploy:
+    desc: Deploy the stack to {{.DOCKER_CONTEXT}}
+    deps: [git_clean_check]
+    vars:
+      # Swarm configs are immutable, so their names include a hash of the
+      # file: a changed config gets a new name on deploy.
+      CONFIG_VERSION:
+        sh: git hash-object {{.CONFIG_FILE}} | cut -c1-12
+      CRONTAB_VERSION:
+        sh: git hash-object {{.CRONTAB_FILE}} | cut -c1-12
+    env:
+      CONFIG_VERSION: "{{.CONFIG_VERSION}}"
+      CRONTAB_VERSION: "{{.CRONTAB_VERSION}}"
+    cmds:
+      - echo "Deploying stack {{.STACK_NAME}}..."
+      - sops exec-env secrets.env 'docker -c {{.DOCKER_CONTEXT}} stack deploy -c {{.SWARM_COMPOSE_FILE}} --detach=false --with-registry-auth {{.STACK_NAME}}'
+      - echo Done.
+
+  deploy-full:
+    desc: Clean build, push, pull, deploy
+    cmds:
+      - task: build-production
+      - task: push
+      - task: pull-production
+      - task: deploy
+
+  remove:
+    desc: Remove the stack from {{.DOCKER_CONTEXT}}
+    prompt: "Really remove the stack {{.STACK_NAME}} from {{.DOCKER_CONTEXT}}?"
+    cmds:
+      - docker -c {{.DOCKER_CONTEXT}} stack rm {{.STACK_NAME}}
+      - echo "Stack {{.STACK_NAME}} removed."
+
+  logs:
+    desc: Show the logs of the production service
+    cmds:
+      - docker -c {{.DOCKER_CONTEXT}} service logs --tail 100 {{.CLI_ARGS}} {{.APP_SERVICE}}
+
+  run:
+    desc: Run locally using docker compose (uses the non-production crontab)
+    cmds:
+      - sops exec-env secrets.env 'docker compose up --build'
+
+  edit-secrets:
+    desc: Edit the encrypted secrets.env
+    interactive: true
+    cmds:
+      - sops edit secrets.env
